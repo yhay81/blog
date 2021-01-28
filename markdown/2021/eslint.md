@@ -1,0 +1,537 @@
+# ESLint のススメ
+
+## まとめ
+
+### ESLint とは
+
+- 「どっちでも書ける記述方法のうちこっちにして」と決めたルールセットとそれに違反しているかどうかを自動検出・訂正するツール。
+- つまり、いわゆる静的解析ツールのうちの`リンター`。プラグイン次第では改行位置やクオート、セミコロンなど見た目が変わるだけの`フォーマッター`も兼ねられる。
+
+### ESLint の良いところ
+
+- 人によってバラバラになってしまいがちな記述方式に一定の統一感を出せる。コードを読む速度が上がる。
+- どっちでもいい時に迷わなくて済む。時短。
+- 変更合戦になりにくくなる。これも時短。
+- ルールの追加などをプラグイン方式で行うので、チームで好きにルールの厳しさを決められる。
+- プラグインはルールセットなんだけど、その中でも個別にオンオフできるし、全部オンとか、`react/recommended` などおすすめルールセットもある。
+- みんな使ってる。（情報少ないとかでは多分困らない。）
+
+## 導入方法
+
+```shell-session
+yarn add -D eslint
+```
+
+そして `package.json` の `scripts` のなかに
+
+```package.json
+"scripts":{
+    ...
+    "lint": "eslint --fix --ext .jsx,.js,.tsx,.ts .",
+    ...
+},...
+```
+
+という感じの行を挟み、その後後述の設定をした上で
+
+```shell-session
+yarn lint
+```
+
+を実行するだけで、eslint が起動するようになる。
+`--fix` は勝手に直しちゃうオプションなのでなしがいい場面もあるかも
+`--ext` で範疇とする拡張子を選ぶ
+最後の `.` は現在のディレクトリ内を探して、という意味。
+
+## 細かい設定
+
+無視したいファイル（`build/`などは無視すべき.`node_modules`だけはデフォルトで無視される）はルートに置いた`.eslintignore`に記述しておくと無視してくれるが、ファイル増えるのが嫌な人は`.eslint.js`内の`"ignorePatterns":`に書いても OK
+その他の設定は `.eslint.js` に記述する。（これがチームごとの秘伝のタレ的になりがち）
+おすすめとしては、取りあえす有名なプラグインいくつかいれて、`hogehoge/recommend`みたいな recommend のルールセットだけオンにして、個別ルールのオンオフはまずは触らない。
+それで進めていってエラーが出た場合、このルール逆の方がいいなとか、無視したいなとなった時に個別にいじる。
+
+つまり、設定で主に触るべきは３箇所
+
+- `"plugins":`どのプラグインを導入するか？（これをしただけではルールはオンにならない）
+- `"extends":`どのルールセットを導入するか？（プラグイン入れなくても最初から eslint 内にあるルールセットもあるよ。）
+- `"rules":`個別対応のルール
+
+（僕個人はちょっとハードコアでいっぱいプラグインいれて`hogehoge:all`みたいな全部オンでどうしても無理なのをオフにするような形で開発してるけど、これをする理由は、こういう記述方式も世の中にあってそれを理想と考える人もいるのねと無理矢理教えてもらえるので学びになるから。チームでやるのはしんどすぎるように思う。）
+
+（`eslint --init`というコマンドを打つことで対話的に質問に答える形で初期設定することもできるけど、今回は秘伝のタレ形式のコピペを推奨するということで割愛。時々最新のデフォルトはどうなってるの？という気持ちでこの叩いたりする。）
+
+## プラグイン紹介
+
+`"@typescript-eslint/eslint-plugin"`　 TypeScript 専用のセット　おすすめ度５
+`"@typescript-eslint/parser"` TypeScript 対応するのに絶対必要なやつ　おすすめ度５
+`"eslint-config-prettier"` prettier と競合するルールをオフにするやつ　おすすめ度５
+`"eslint-plugin-ava"`　よく知らないけど、いっぱい盛りセット。嫌いじゃないけどあんまり使われてない。おすすめ度２
+`"eslint-plugin-eslint-comments"`　コメントの書き方セット。別にいらん？おすすめ度２
+`"eslint-plugin-import"`　 import 時のルールおすすめ度３
+`"eslint-plugin-jsx-a11y"`　アクセシビリティ守ろうセット。おすすめ度３
+`"eslint-plugin-react"`　 react のやつ。おすすめ度５
+`"eslint-plugin-react-hooks"`　 react-hooks のやつ。おすすめ度４
+`"eslint-plugin-simple-import-sort"`　インポート・エクスポート順だけ。"eslint-plugin-import"はエクスポートないからそのためだけに仕方なく。おすすめ度 2
+`"eslint-plugin-sonarjs"`　[sonarqube](https://www.sonarqube.org/)っていう言語によらない汎用リンターがあって、そこのルール。おすすめ度３
+`"eslint-plugin-unicorn"`　よく知らないけど、いっぱい盛りセット。若干癖つよ感。おすすめ度２
+`"eslint-plugin-prettier"`　 prettier を eslint から起動するのではなく、別に prettier コマンドを打つ派閥が存在する。おすすめ度３
+
+## たまに無効化したい場合
+
+1 行だけ無効化したい場合、エラーが出た行の 1 行上にコメントで
+
+```typescript
+// eslint-disable-next-line camelcase
+```
+
+JSXElement 内だと
+
+```tsx
+{/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
+```
+
+数行分だと
+
+```typescript
+/* eslint-disable camelcase */
+interface ArticleRecord {
+  article_id: number
+  published_at: Date
+  title: string
+}
+/* eslint-enable camelcase */
+```
+
+これでファイル全体を囲むと、当然ファイル全体で無効化できる。最後の eslint-enable は無くても良いけど、あった方がいいかも。
+
+## 設定例
+
+TypeScript/React の場合、定番の楽な設定はこんな感じ。これベースにお好みでプラグイン追加したりすると良いように思う。
+
+```shell-session
+yarn add -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-config-prettier eslint-plugin-react eslint-plugin-react-hooks
+```
+
+```javascript
+module.exports = {
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:react/recommended",
+  ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly",
+    "React": "writable"
+  },
+  "ignorePatterns": [
+    "build",
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": { "jsx": true },
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "react",
+  ],
+  "rules": {
+      //　ここに個別対応したいものを書く
+  },
+  "settings": { "react": { "version": "detect" } }
+}
+
+```
+
+:::details おまけ(ハードコアの実際使ったやつ)
+
+特に　"@typescript-eslint/prefer-readonly-parameter-types"
+こいつが強敵。ある程度意識して書いてるけど、今回はオフにしている。
+学びのためなので、`eslint-config-prettier`も使わずに設定している。
+
+```javascript
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2020": true
+  },
+  "extends": [
+    "eslint:all",
+    "plugin:@typescript-eslint/all",
+    "plugin:ava/recommended",
+    "plugin:eslint-comments/recommended",
+    "plugin:import/errors",
+    "plugin:import/react",
+    "plugin:import/typescript",
+    "plugin:import/warnings",
+    "plugin:jsx-a11y/strict",
+    "plugin:react-hooks/recommended",
+    "plugin:react/all",
+    "plugin:sonarjs/recommended",
+    "plugin:unicorn/recommended"
+  ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly",
+    "React": "writable"
+  },
+  "ignorePatterns": [
+    "__memo__",
+    "packages/api/dist",
+    "packages/app/public/*.js",
+    "packages/shared/dist",
+    "templates"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": { "jsx": true },
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "ava",
+    "eslint-comments",
+    "import",
+    "jsx-a11y",
+    "react",
+    "simple-import-sort",
+    "sonarjs",
+    "unicorn"
+  ],
+  "rules": {
+    "jsx-a11y/anchor-is-valid": "off",
+    "jsx-a11y/label-has-for": "off",
+    "jsx-a11y/no-onchange": "off",
+
+    "unicorn/no-nested-ternary": "off",
+    "unicorn/no-null": "off",
+    "unicorn/no-useless-undefined": "off",
+    "unicorn/prevent-abbreviations": "off",
+
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/indent": "off",
+    "@typescript-eslint/no-magic-numbers": "off",
+
+    "react/forbid-component-props": "off",
+    "react/function-component-definition": "off",
+    "react/jsx-child-element-spacing": "off",
+    "react/jsx-curly-newline": "off",
+    "react/jsx-handler-names": "off",
+    "react/jsx-max-props-per-line": "off",
+    "react/jsx-newline": "off",
+    "react/jsx-no-bind": "off",
+    "react/jsx-no-literals": "off",
+    "react/jsx-one-expression-per-line": "off",
+
+    "array-bracket-newline": "off",
+    "array-element-newline": "off",
+    "capitalized-comments": "off",
+    "function-call-argument-newline": "off",
+    "function-paren-newline": "off",
+    "id-length": "off",
+    "implicit-arrow-linebreak": "off",
+    "line-comment-position": "off",
+    "lines-around-comment": "off",
+    "max-len": "off",
+    "max-lines-per-function": "off",
+    "max-statements": "off",
+    "multiline-ternary": "off",
+    "newline-per-chained-call": "off",
+    "no-confusing-arrow": "off",
+    "no-continue": "off",
+    "no-inline-comments": "off",
+    "no-mixed-operators": "off",
+    "no-ternary": "off",
+    "no-undef-init": "off",
+    "no-undefined": "off",
+    "no-underscore-dangle": "off",
+    "sort-imports": "off",
+    "sort-keys": "off",
+    "wrap-regex": "off",
+
+    "simple-import-sort/imports": "warn",
+    "simple-import-sort/exports": "warn",
+
+    // "unicorn/custom-error-definition": "warn",
+    "unicorn/no-keyword-prefix": "warn",
+    "unicorn/no-unsafe-regex": "warn",
+    "unicorn/no-unused-properties": "warn",
+    "unicorn/numeric-separators-style": "warn",
+    "unicorn/string-content": "warn",
+
+    "eslint-comments/no-restricted-disable": "warn",
+    "eslint-comments/no-unused-disable": "warn",
+    // "eslint-comments/no-use": "warn",
+    // "eslint-comments/require-description": "warn",
+
+    "ava/no-cb-test": "warn",
+    "ava/prefer-power-assert": "warn",
+    "ava/test-title-format": "warn",
+
+    "import/no-restricted-paths": "warn",
+    "import/no-absolute-path": "warn",
+    "import/no-dynamic-require": "warn",
+    // "import/no-internal-modules": "warn",
+    "import/no-webpack-loader-syntax": "warn",
+    "import/no-self-import": "warn",
+    "import/no-cycle": "warn",
+    "import/no-useless-path-segments": "warn",
+    // "import/no-relative-parent-imports": "warn",
+
+    "import/export": "warn",
+    "import/no-extraneous-dependencies": "warn",
+    "import/no-mutable-exports": "warn",
+    "import/no-unused-modules": "warn",
+
+    // "import/unambiguous": "warn",
+    "import/no-commonjs": "warn",
+    "import/no-amd": "warn",
+    "import/no-nodejs-modules": "warn",
+
+    "import/first": "warn",
+    "import/exports-last": "warn",
+    "import/no-duplicates": "warn",
+    "import/no-namespace": "warn",
+    "import/extensions": "warn",
+    // "import/order": "warn",
+    "import/newline-after-import": "warn",
+    // "import/prefer-default-export": "warn",
+    // "import/max-dependencies": "warn",
+    "import/no-unassigned-import": "warn",
+    "import/no-named-default": "warn",
+    // "import/no-default-export": "warn",
+    // "import/no-named-export": "warn",
+    "import/no-anonymous-default-export": "warn",
+    "import/group-exports": "warn",
+    "import/dynamic-import-chunkname": "warn",
+
+    "unicorn/filename-case": [
+      "warn",
+      { "cases": { "camelCase": true, "pascalCase": true, "kebabCase": true } }
+    ],
+
+    "@typescript-eslint/comma-dangle": [
+      "warn",
+      {
+        "arrays": "always-multiline",
+        "objects": "always-multiline",
+        "imports": "always-multiline",
+        "exports": "always-multiline"
+      }
+    ],
+    "@typescript-eslint/member-delimiter-style": [
+      "warn",
+      {
+        "multiline": { "delimiter": "none", "requireLast": false },
+        "singleline": { "requireLast": false }
+      }
+    ],
+    "@typescript-eslint/naming-convention": [
+      "warn",
+      {
+        "selector": "default",
+        "format": ["strictCamelCase", "StrictPascalCase"]
+      },
+      {
+        "selector": "variable",
+        "format": ["strictCamelCase", "StrictPascalCase", "UPPER_CASE"],
+        "trailingUnderscore": "allow"
+      },
+      {
+        "selector": "function",
+        "format": ["strictCamelCase", "StrictPascalCase"]
+      },
+      {
+        "selector": "parameter",
+        "format": ["strictCamelCase"],
+        "leadingUnderscore": "allow"
+      },
+      {
+        "selector": "property",
+        "format": ["strictCamelCase", "StrictPascalCase"]
+      },
+      {
+        "selector": "parameterProperty",
+        "format": ["strictCamelCase"]
+      },
+      {
+        "selector": "method",
+        "format": ["strictCamelCase"]
+      },
+      {
+        "selector": "accessor",
+        "format": ["strictCamelCase"]
+      },
+      {
+        "selector": "enumMember",
+        "format": ["strictCamelCase"]
+      },
+      {
+        "selector": "class",
+        "format": ["StrictPascalCase"]
+      },
+      {
+        "selector": "interface",
+        "format": ["StrictPascalCase"]
+      },
+      {
+        "selector": "enum",
+        "format": ["strictCamelCase"]
+      },
+      {
+        "selector": "typeAlias",
+        "format": ["StrictPascalCase"]
+      },
+      {
+        "selector": "typeParameter",
+        "format": ["StrictPascalCase"]
+      }
+    ],
+    "@typescript-eslint/no-extra-parens": ["warn", "functions"],
+    "@typescript-eslint/no-type-alias": [
+      "warn",
+      {
+        "allowAliases": "always",
+        "allowCallbacks": "always",
+        "allowConditionalTypes": "always",
+        "allowMappedTypes": "always"
+      }
+    ],
+    // "@typescript-eslint/prefer-readonly-parameter-types": [
+    //   "warn",
+    //   { "ignoreInferredTypes": true }
+    // ],
+    "@typescript-eslint/prefer-readonly-parameter-types": "off",
+    "@typescript-eslint/quotes": "off",
+    "@typescript-eslint/object-curly-spacing": ["warn", "always"],
+    "@typescript-eslint/semi": ["warn", "never"],
+    "@typescript-eslint/space-before-function-paren": [
+      "warn",
+      { "named": "never" }
+    ],
+
+    "react/jsx-filename-extension": [2, { "extensions": [".tsx"] }],
+    "react/jsx-indent": [
+      "warn",
+      2,
+      { "checkAttributes": true, "indentLogicalExpressions": true }
+    ],
+    "react/jsx-indent-props": ["warn", 2],
+    "react/jsx-max-depth": ["warn", { "max": 4 }],
+    "react/jsx-props-no-spreading": [
+      "warn",
+      { "custom": "ignore", "explicitSpread": "ignore" }
+    ],
+    "react/no-multi-comp": ["warn", { "ignoreStateless": true }],
+
+    "dot-location": ["warn", "property"],
+    "func-style": ["warn", "declaration", { "allowArrowFunctions": true }],
+    "max-classes-per-file": ["warn", 2],
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-void": ["warn", { "allowAsStatement": true }],
+    "object-property-newline": [
+      "warn",
+      { "allowAllPropertiesOnSameLine": true }
+    ],
+    "one-var": ["warn", "never"],
+    "padded-blocks": ["warn", "never"],
+    "quote-props": ["warn", "as-needed"],
+
+    "sonarjs/no-duplicate-string": ["warn", 4]
+  },
+  "settings": { "react": { "version": "detect" } }
+}
+
+
+```
+
+:::
+
+<https://github.com/EvgenyOrekhov/eslint-config-hardcore#readme>
+こんなのもあるよ。やらんけど。
+
+## 関連した話題
+
+### prettier
+
+前述の通り「prettier はフォーマッターであり、リンターではないぞ派閥」がいるため、そういう時はこう
+
+```json
+"scripts":{
+  ...
+  "format":"prettier  \"**/*\" --write --ignore-unknown",
+  ...
+}
+```
+
+つまり prettier は別に `yarn add -D prettier`　でいれて別スクリプトにして `yarn format` コマンド叩く。
+この派閥の利点は eslint の適用範囲を超えて prettier を適用するという設定値が自然なところ。例えば html ファイルとか、css ファイルとかは eslint に入れずに、prettier にはかけるとか。
+
+「フォーマッターもリンターも一緒でええ」派閥は`eslint-plugin-prettier`を入れるといい。
+(prettier は vscode にプラグインとして入れてて保存時に自動で常にやってくれるようにしてるから、わざわざ scripts にしない派閥もあるらしいけど、それするにしても、scripts 化しとくと何かと自動化できたりして良いですよ)
+（あと`eslint-config-prettier`って名前似てて何って感じだが、これは競合するルールをオフにするやつなので、どちらの派閥も入れた方が良い）
+
+また、prettier は完全に no config 派閥と `package.json`などに
+
+```json
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  },
+```
+
+とか書いて、この二つだけは設定する派閥がある。僕は vercel 信者なので、後者。
+
+### husky, lint-staged
+
+`yarn add -D husky lint-staged`
+して、から以下のように `package.json` に書くとコミット時に毎回 lint-staged 内のコマンドが走って、git add で追加した、つまり stage 内のファイルのみが捜査される。失敗するとコミットできなくなる。ハスキー犬のようにやかましい。（どのチームでも入れると良いとは思わない）
+`husky`は git コマンドに連動して自動で走らせるやつで、`lint-staged`は stage 内だけ走らせるってやつ。
+
+```package.json
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*": "yarn format",
+    "*.{js,ts,tsx}": "yarn lint"
+  },
+```
+
+### あと
+
+あんまり関係ないけど他に入れてるツール紹介
+
+#### npm-check-updates
+
+```
+yarn add -D npm-check-updates
+```
+
+バージョン更新を自動で確認してくれる。 インストールせずに`npx npm-check-update` とか `yarn dlx npm-check-update` (yarn v2 のみのやつ)で利用しても良いツールかも。安易なバージョンアップはすぐ問題を起こすので要注意。
+
+#### sort-package-json
+
+```shell-session
+yarn add -D sort-package-json
+```
+
+package.json を綺麗にしてくれるやつ。以下のようにしている。
+
+```json
+"scripts":{...
+  "format": "sort-package-json package.json && prettier \"**/*\" --write --ignore-unknown",...
+```
