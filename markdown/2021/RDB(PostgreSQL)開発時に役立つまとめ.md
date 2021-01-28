@@ -1,0 +1,114 @@
+# データベースの設計時に使うツールなど
+
+PostgreSQL を主眼に置いた雑多なメモです。  
+似たようなものがたくさんある DB 関連のツールなどをまとめています。  
+他にもこんなのおすすめだよとかあれば教えてください。
+
+## まとめ
+
+- テーブルの設計時には ER 図作って情報を共有・整理したい。
+- [DBeaver](https://dbeaver.io/) 使うと既存 DB の ER 図表示できるよ。
+- ローカルに DB 実際に作って変更を加えながら DBeaver の ER 図見るという方法が良い感じ。
+
+## ER 図作成ツール
+
+**ER 図（Entity Relationship Diagram）** はテーブル定義とテーブル間の関係を表現した図のことで、ある程度標準化されたルールがある。
+テーブル設計時に書いておくと、テーブルの追加変更などの時や、データベースをプログラムから使うときにも参照できて便利
+
+(参考) [やさしい図解で学ぶ　 ER 図　表記法一覧](https://qiita.com/ramuneru/items/32fbf3032b625f71b69d)
+
+ER 図作成ツールには以下の機能を期待する。
+
+- ER 図の作成・管理・共有が簡単
+- 既存のデータベースから自動で ER 図を作成できる（import 機能）
+- ER 図からデータベース作成クエリが自動で発行できる（export 機能）
+
+:::details おすすめの ER 図作成ツール のリスト
+
+### [DBeaver](https://dbeaver.io/) (DB から読み込み)
+
+０から図のみを作ることはできず、実際の DB から読み込む形のツールだが、設計時用の DB を作ってその上で作業する方式が効率的なのでご紹介。
+
+### [PlantUML](https://plantuml.com/)
+
+VSCode 上でテキストファイルとして作成できるので、管理や共有が簡単。
+紹介記事: [PlantUML 使い方メモ](https://qiita.com/opengl-8080/items/98c510b8ca060bdd2ea3)
+
+### [Lucidchart](https://www.lucidchart.com/pages/ja/examples/ER-diagram-tool)
+
+ブラウザ上で操作するオンラインアプリ。汎用図形ツールとして使える
+
+### その他
+
+他にもたくさんありますが、軽快に動くのは少ない印象
+
+:::
+
+## クライアント GUI
+
+データベースにアクセスし、操作を行う機能をもったアプリケーション。以下の機能を期待する。
+
+- データベース接続情報を保管し、簡単に接続。
+- テーブル一覧・データの閲覧・テーブル定義やインデックスなどを簡単に表示する。
+- 生の SQL 書いて発行もできる。
+
+:::details クライアント GUI のリスト
+
+### [DBeaver](https://dbeaver.io/)
+
+UI もモダンで期待する機能が揃っていて重くない。
+Enterprise Edition もあるが無料版でも十分。
+
+### [pgAdmin](https://www.pgadmin.org/)
+
+PostgreSQL の最も有名な古参 WEB ベースクライアント GUI。
+
+情報が多く「pgAdmin 使ってこうやって」とか指示してくる記事もたまにある。UI が古くてわかりにくい。
+
+### [DataGrip](https://www.jetbrains.com/datagrip/)
+
+DBeaver とできることが近い有料ツール。JetBrain ファミリー
+
+### [TablePlus](https://tableplus.com/)
+
+機能は少ないがシンプルでわかりやすい。開発時の普段使いにはいいかも。
+無料版で十分だが、$59 でフル機能版を買い切りで購入できる。（さらに１年間は最新版が出たとしても新しいのももらえる）
+紹介記事「[TablePlus を使ってみる。シンプルでモダンな SQL クライアントツール](https://tech-blog.s-yoshiki.com/entry/59)」<https://tech-blog.s-yoshiki.com/entry/59>
+
+### その他
+
+無限にある気がするのでリストをご紹介
+PostgreSQL WIKI 内のページ: <https://wiki.postgresql.org/wiki/Community_Guide_to_PostgreSQL_GUI_Tools>
+
+:::
+
+## DB データ可視化ツール
+
+おまけとしてのご紹介。  
+クライアント GUI の一覧に登場することがあるが、`テーブル定義やインデックス`の表示などはできないことが多いため別枠としてご紹介。
+**テーブル内のデータに関して、ある値を持ったものの数や、割合などをグラフィカルに表示してくれる** ため、開発時というより運用時に活躍してくれるやつ。
+
+このツールは特徴がそれぞれあって要件によってそれに合うかどうかで選ぶべきと考える。
+
+:::details データ可視化ツール
+
+### [MetaBase](https://www.metabase.com/)
+
+試しに使ってみるかくらいの感覚であれば [MetaBase](https://www.metabase.com/) が簡単なのでおすすめ。
+
+- 「[OSS のデータ可視化ツール「Metabase」が超使いやすい](https://qiita.com/acro5piano/items/0920550d297651b04387)」<https://qiita.com/acro5piano/items/0920550d297651b04387>
+- 「[オープンソースのデータ可視化ツール Metabase のご紹介](https://www.beex-inc.com/blog/metabase-overview/)」<https://www.beex-inc.com/blog/metabase-overview/>
+
+### [Apache Superset](https://superset.apache.org/)
+
+2021/01/21 に [v1.0.0](https://github.com/apache/superset/tree/master/RELEASING/release-notes-1-0) がリリースされ、今週の GitHub トレンド１位になってる話題のやつ。
+
+### [redash](https://redash.io/)
+
+使ったことはないけど、よく紹介されてて簡単そう
+
+### [Grafana](https://grafana.com/)
+
+DB だけじゃなくていろんなデータをいろんなグラフで可視化できる
+
+:::
