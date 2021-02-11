@@ -68,7 +68,7 @@ Python のエコシステムはパッケージ管理ツール(pip, pipenv, poeto
 
 ### フォーマッター
 
-black(整形) と isort(import のソート)を紹介します。両方の導入を勧めます。
+`black(整形)` と `isort(import のソート)`を紹介します。両方の導入を勧めます。
 
 #### [black](https://black.readthedocs.io/en/stable/index.html)
 
@@ -96,7 +96,7 @@ PEP8 では以下の順になるよう決められていて、それに加えて
 
 ### 総合的なリンター
 
-Flake8, pylint, Prospector を紹介します。これらは重複する機能を持つので、少なくとも 1 つの導入を勧めます。
+`Flake8`, `pylint`, `Prospector` を紹介します。これらは重複する機能を持つので、少なくとも 1 つの導入を勧めます。
 
 #### [Flake8](https://flake8.pycqa.org/en/latest/)
 
@@ -129,7 +129,8 @@ Python の TypeHint の方法は Python3.9 で拡張されましたが、2021/1 
 
 #### [Bandit](https://bandit.readthedocs.io/en/latest/)
 
-bandit はセキュリティ的に問題がありそうな箇所を判定してくれるリンターです。
+Bandit はセキュリティ的に問題がありそうな箇所を判定してくれるリンターです。
+他のリンターにはない観点のチェックが用意されているので、ここで紹介しました。
 
 ### Python のリンターもっと紹介
 
@@ -260,9 +261,9 @@ black では 88 文字をデフォルトの設定としていて、僕は black 
 
 ### VSCode と連携する方法
 
-おすすめの VSCode の設定を紹介する。
+おすすめの VSCode の設定を紹介します。
 以下を `settings.json` に書き込むか、
-設定を開いて`python.formatting.provider`などで検索すると出てくる項目で "black"というように選択などして設定できる。
+設定を開いて`python.formatting.provider`などで検索すると出てくる項目で "black"というように選択などして設定することができます。
 
 ```json:settings.json
 {
@@ -274,7 +275,7 @@ black では 88 文字をデフォルトの設定としていて、僕は black 
 }
 ```
 
-リンターとはあまり関係がない項目もあるが、python 関連では僕はさらに以下のような設定を入れている。
+リンターとはあまり関係がない項目もあるりますが、python 関連では僕はさらに以下のような設定を入れています。
 
 ```json:settings.json
 {
@@ -302,14 +303,14 @@ black では 88 文字をデフォルトの設定としていて、僕は black 
 
 かなり時間のかかるテストを自動化したい場合、コミットごとに実行され待たされるのは大変なので後者を選ぶ場合が多いです。
 しかし、リンター程度の数秒で終わるものであれば、前者の方が（失敗した場合にすぐ気付きすぐ対応できるという意味で）便利です。
-今回はコミット前に実行させる方法を紹介します。
+そこで、今回はコミット前に実行させる方法を紹介します。
 
 #### コミット前に実行させる方法
 
 （ここで紹介するコミット前に実行する方法に関しては OSS でも見かけることが少なく、一般的な方法とは呼べないかもしれません。npm 環境では husky を用いて行う方法が一般に知られていて多くのリポジトリでそれを見ることができるので、commit 前にリントすること自体は普及してもおかしくなさそうなのですが、python 界隈では方法の確立だけでなくそれ自体が行われていることが少ない印象です。）
 
-git の hook 機能を用いて commit する度に lint を行わせることができます。
-.git/hooks/pre-commit というファイルに行いたい動作を書けば良いのですが、.git ディレクトリは共有されないので、今回は python の pre-commit というパッケージを利用する方法を紹介します。（git の基本機能の pre-commit と python のパッケージの pre-commit が同じ名前なのでややこしい。）
+**git の hook 機能**を用いて commit する度に lint を行わせることができます。
+.git/hooks/pre-commit というファイルに行いたい動作を書けば良いのですが、.git ディレクトリは共有されないので、今回は python 製 の (**pre-commit**)[https://github.com/pre-commit/pre-commit] というツールを利用する方法を紹介します。（git の基本機能の pre-commit と python の pre-commit が同じ名前なのでややこしい。）
 
 python の pre-commit パッケージでは以下のような設定ファイルを書き、`pre-commit install`というコマンドを打つことで`.git/hooks/pre-commit`のファイルをうまく作成してくれます。
 
@@ -355,7 +356,7 @@ repos:
 
 ```sh:init-pre-commit.sh
 ROOT_DIR=$(cd $(dirname $0);cd ..; pwd)
-python -m venv ${ROOT_DIR}/.venv_temp_precommit
+python -m venv ${ROOT_DIR}/.venv_temp_precommit  # tox と pre-commit を使うためだけの一時的な環境を作る
 source ${ROOT_DIR}/.temp_venv_precommit/bin/activate
 pip install pre-commit tox
 tox -c ${ROOT_DIR}/tox.ini -e lint
