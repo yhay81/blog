@@ -81,12 +81,12 @@ Python のエコシステムはパッケージ管理ツール(pip, pipenv, poeto
 - 他の有名リンターのデフォルト設定と矛盾するルールがある。
 
 black 開発チームはこれらの批判に対し、[PEP8 (python 公式文章の 1 つ) に準拠しているのは black である](https://black.readthedocs.io/en/stable/compatible_configs.html)と述べています。
-僕自信は black を支持していて、他を black に合わせる運用を好んでいます。
+僕は black を支持していて、他を black に合わせる運用を好んでいます。
 
 #### [isort](https://pycqa.github.io/isort/)
 
 isort は python のモジュール等を import する行(`import requests` など)をソートしてくれるツールです。
-PEP8 では以下の順になるよう決められていて、それに加えて各行もアルファベット順にソートしてくれます。
+PEP8 では以下の順になるよう決められていて、isort はそれに加えて各行もアルファベット順にソートしてくれます。
 
 - 標準ライブラリ
 - サードパーティに関連するもの
@@ -180,6 +180,7 @@ Bandit はセキュリティ的に問題がありそうな箇所を判定して�
 Makefile はファイルにコマンドのリストを記述しておくと `make lint` などのように簡単に実行できて良いのですが、
 tox ではさらにそのコマンドの実行環境を独立に作成してくれるため、開発環境がチームで揃っていなかったり、環境を汚したくないような場面でおすすめです。
 （後述の VSCode 連携のためにはどこかしらには lint プログラムを入れる必要がありますが、、）
+ということで今回は tox を用いた導入方法を紹介します。
 
 #### tox
 
@@ -195,11 +196,11 @@ tox は複数の Python バージョンでのテストの実行やドキュメ�
 ```ini:tox.ini
 [tox]
 envlist =
-    py36
+    py39
     lint
     strictlint
 
-# tox -e py36 で実行するための内容。
+# tox -e py39 で実行するための内容。lintではないが、一般的なtoxの利用例の参考としてテストを実行するtestentを書いた。
 [testenv]
 deps =
     -rrequirements.txt
@@ -348,8 +349,9 @@ repos:
 ディレクトリ構成
 
 ```txt
-/
-|- scripts/
+./
+ |- tox.ini など
+ |- scripts/
     |- .pre-commit-config.yaml
     |- init-pre-commit.sh
 ```
