@@ -113,16 +113,16 @@ pylint は単体で pep8 スタイルチェックや論理エラーチェック�
 #### [Prospector](http://prospector.landscape.io/en/master/)
 
 Prospector はさらに多くのリンターを抱き合わせることができるリンターまとめツールです。
-isort,pylint も入っているし、後述の mypy や bandit もオプションで追加することができます。
+isort も pylint も入っているし、後述の mypy や bandit もオプションで追加することができます。
 多くのリンターを個別に導入すると設定ファイルや実行方法が乱雑になってしまい、混乱してしまいますが、Prospector を導入すると一度に`prospector .`のコマンドだけで全てを実行することができるようになります。
-僕は期待しているツールなのですが、開発スピードはあまり早くなく、現状依存する isort のバージョンが古いままのため black と不整合を起こしてしまったりします。
+僕は期待しているツールなのですが、開発スピードはあまり速くなく、現状依存する isort のバージョンが古いままのため black と不整合を起こしてしまったりします。
 
 ### 型チェック
 
 #### [mypy](http://www.mypy-lang.org/)
 
 mypy は型チェックを行なってくれるツールです。
-Python は動的な型を持つ言語ですがオプションとして TypeHint と呼ばれる方法で型情報を付与することができます。（参考)[PEP484](https://www.python.org/dev/peps/pep-0484/)
+Python は動的な型を持つ言語ですが、オプションとして TypeHint と呼ばれる方法で型情報を付与することができます。（参考)[PEP484](https://www.python.org/dev/peps/pep-0484/)
 Python の TypeHint の方法は Python3.9 で拡張されましたが、2021/1 の v0.800 アップデートで mypy もその拡張に対応しました。
 
 ### セキュリティチェック
@@ -158,7 +158,7 @@ Bandit はセキュリティ的に問題がありそうな箇所を判定して�
 ::: details PyCQA が管理している有名リンター
 
 [PyCQA](https://github.com/PyCQA) は有名リンターを１箇所に集めて管理している GitHub Organization です。
-前述のリストの中では pylint,prospector,mypy,Bandit,pycodestyle,pydocstyle がこの団体で管理されています。
+先ほどの VSCode のリストの中では pylint,prospector,mypy,Bandit,pycodestyle,pydocstyle がこの Organization で管理されています。
 
 - [isort](https://pycqa.github.io/isort/): import のソートだけするフォーマッター
 - [pyflakes](https://github.com/PyCQA/pyflakes): 論理エラーをチェックするリンター。Flake8 に入っている。
@@ -232,7 +232,7 @@ commands =
     flake8 --ignore= .
     mypy --ignore-missing-imports --strict .
 
-# 設定項目
+# 設定項目(ほぼ black に合わせるための設定(参考):https://black.readthedocs.io/en/stable/compatible_configs.html)
 [isort]
 multi_line_output = 3
 include_trailing_comma = True
