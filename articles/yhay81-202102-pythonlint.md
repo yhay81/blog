@@ -361,34 +361,34 @@ JavaScript の eslint における `// eslint-ignore-next-line` のようにソ�
 
 ### black を部分的に無効化する方法
 
-ドキュメント）https://pycqa.github.io/isort/docs/configuration/action_comments/
+ドキュメント）<https://black.readthedocs.io/en/stable/the_black_code_style.html>
 
 一部無視する場合: 無視したい行を `# fmt: off` と `# fmt: on` で囲む。
 
 ### isort を部分的に無効化する方法
 
-ドキュメント）https://pycqa.github.io/isort/docs/configuration/action_comments/
+ドキュメント）<https://pycqa.github.io/isort/docs/configuration/action_comments/>
 
 ファイルごと無視する場合: `# isort: skip_file` とファイルの先頭に書く。
 一部無視する場合: `# isort: skip`, `# isort: off`/`# isort: on`, `isort: split` がある。詳しくは[ドキュメント](https://pycqa.github.io/isort/docs/configuration/action_comments/)
 
 ### flake8 を部分的に無効化する方法
 
-ドキュメント）https://flake8.pycqa.org/en/3.1.1/user/ignoring-errors.html
+ドキュメント）<https://flake8.pycqa.org/en/3.1.1/user/ignoring-errors.html>
 
 ファイルごと無視する場合: `# flake8: noqa` とファイルの先頭に書く。
 一部無視する場合: `# noqa` とその行に書く。（特定のルールには`# noqa: E731,E123`のように書く）
 
 ### mypy を部分的に無効化する方法
 
-ドキュメント）https://pycqa.github.io/isort/docs/configuration/action_comments/
+ドキュメント）<https://mypy.readthedocs.io/en/stable/common_issues.html>
 
 ファイルごと無視する場合: `# mypy: ignore-errors` とファイルの先頭に書く。
 一部無視する場合: `# type: ignore` とその行に書く。
 
 ### bandit を部分的に無効化する方法
 
-ドキュメント）https://pycqa.github.io/isort/docs/configuration/action_comments/
+ドキュメント）<https://github.com/PyCQA/bandit#exclusions>
 
 一部無視する場合: `# nosec` とその行に書く。
 
