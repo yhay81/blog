@@ -1,8 +1,8 @@
 ---
-title: "2021年Python開発リンター導入のベストプラクティス"
-emoji: "🐍"
-type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["python", "black", "flake8", "isort", "mypy"]
+title: '2021年Python開発リンター導入のベストプラクティス'
+emoji: '🐍'
+type: 'tech' # tech: 技術記事 / idea: アイデア
+topics: ['python', 'black', 'flake8', 'isort', 'mypy']
 published: true
 ---
 
@@ -221,7 +221,7 @@ commands =
     flake8 .
     mypy --ignore-missing-imports .
 
-# tox -e strictlint で実行するための内容。testenv:lint厳しい設定で利用は必須ではない想定。
+# tox -e strictlint で実行するための内容。testenv:lint より厳しい設定で利用は必須ではない想定。
 [testenv:strictlint]
 ignore_errors = true
 deps =
@@ -357,13 +357,13 @@ repos:
 ```
 
 ```sh:init-pre-commit.sh
-ROOT_DIR=$(cd $(dirname $0);cd ..; pwd)
-python -m venv ${ROOT_DIR}/.venv_temp_precommit  # tox と pre-commit を使うためだけの一時的な環境を作る
-source ${ROOT_DIR}/.temp_venv_precommit/bin/activate
+SCRIPT_DIR=$(cd $(dirname $0);cd ..; pwd)
+python3 -m venv ${SCRIPT_DIR}/.venv_temp_precommit  # tox と pre-commit を使うためだけの一時的な環境を作る
+source ${SCRIPT_DIR}/.venv_temp_precommit/bin/activate
 pip install pre-commit tox
-tox -c ${ROOT_DIR}/tox.ini -e lint
-pre-commit install -c ${ROOT_DIR}/.pre-commit-config.yaml
-rm -rf ${ROOT_DIR}/.venv_temp_precommit
+tox -c ${SCRIPT_DIR}/tox.ini -e lint
+pre-commit install -c ${SCRIPT_DIR}/.pre-commit-config.yaml
+rm -rf ${SCRIPT_DIR}/.venv_temp_precommit
 ```
 
 ## リンターを（部分的に）無効化する方法
