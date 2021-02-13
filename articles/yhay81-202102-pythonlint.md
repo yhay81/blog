@@ -219,7 +219,7 @@ commands =
     isort .
     black .
     flake8 .
-    mypy --ignore-missing-imports .
+    mypy .
 
 # tox -e strictlint で実行するための内容。testenv:lint より厳しい設定で利用は必須ではない想定。
 [testenv:strictlint]
@@ -229,19 +229,15 @@ deps =
     flake8
     mypy
 commands =
-    bandit --exclude ./.tox,./**/tests --recursive .
-    flake8 --ignore= .
-    mypy --ignore-missing-imports --strict .
+    bandit --exclude ./.tox,./venv,./.venv,./**/tests --recursive .
+    flake8 --ignore=W503 .
+    mypy --strict .
+```
 
-# 設定項目(ほぼ black に合わせるための設定(参考):https://black.readthedocs.io/en/stable/compatible_configs.html)
-[isort]
-multi_line_output = 3
-include_trailing_comma = True
-force_grid_wrap = 0
-use_parentheses = True
-ensure_newline_before_comments = True
-line_length = 88
+次に、各コマンドの設定です。
+ファイル数を増やしたくない場合 tox.ini に記述することができますが、setup.cfg に分離することで tox 経由以外での手動での実行にも設定を適用できるためこれを分けて設定しています。
 
+```ini:setup.cfg
 [flake8]
 max-line-length = 119
 exclude =
@@ -249,6 +245,14 @@ exclude =
     __pychache__
     .tox
     venv
+    **/migrations
+
+[mypy]
+ignore_missing_imports = True
+exclude = venv,.venv
+
+[mypy-*.migrations.*]
+ignore_errors = True
 
 ```
 
@@ -321,25 +325,26 @@ repos:
     hooks:
       - id: isort
         name: isort
-        entry: .tox/lint/bin/isort --sp=tox.ini
+        entry: bash -c '.tox/lint/bin/isort --check-only --profile black .'
         language: system
         types: [python]
       - id: black
         name: black
-        entry: .tox/lint/bin/black
+        entry: bash -c '.tox/lint/bin/black --check .'
         language: system
         types: [python]
       - id: flake8
         name: flake8
-        entry: .tox/lint/bin/flake8 --config=tox.ini
+        entry: bash -c '.tox/lint/bin/flake8 --extend-ignore=F405,W291'
         language: system
         types: [python]
       - id: mypy
         name: mypy
-        entry: .tox/lint/bin/mypy --ignore-missing-imports
+        entry: bash -c '.tox/lint/bin/mypy .'
         pass_filenames: false
         language: system
         types: [python]
+
 ```
 
 ここで、これらのリンターは個別にその場で install しながら利用することもできるのですが、今回はせっかく設定等も作りこんだ tox 環境のものをそのまま使うようにしました。
@@ -357,13 +362,13 @@ repos:
 ```
 
 ```sh:init-pre-commit.sh
-SCRIPT_DIR=$(cd $(dirname $0);cd ..; pwd)
-python3 -m venv ${SCRIPT_DIR}/.venv_temp_precommit  # tox と pre-commit を使うためだけの一時的な環境を作る
-source ${SCRIPT_DIR}/.venv_temp_precommit/bin/activate
+PROJECT_DIR=$(cd $(dirname $0);cd ..; pwd)
+python3 -m venv ${PROJECT_DIR}/.venv_temp_precommit  # tox と pre-commit を使うためだけの一時的な環境を作る
+source ${PROJECT_DIR}/.venv_temp_precommit/bin/activate
 pip install pre-commit tox
-tox -c ${SCRIPT_DIR}/tox.ini -e lint
-pre-commit install -c ${SCRIPT_DIR}/.pre-commit-config.yaml
-rm -rf ${SCRIPT_DIR}/.venv_temp_precommit
+tox -c ${PROJECT_DIR}/tox.ini -e lint
+pre-commit install -c ${PROJECT_DIR}/.pre-commit-config.yaml
+rm -rf ${PROJECT_DIR}/.venv_temp_precommit
 ```
 
 ## リンターを（部分的に）無効化する方法
