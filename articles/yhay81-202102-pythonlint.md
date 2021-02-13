@@ -249,10 +249,13 @@ exclude =
 
 [mypy]
 ignore_missing_imports = True
-exclude = venv,.venv
 
-[mypy-*.migrations.*]
+[mypy-*.migrations.*]  # Django を利用する場合、migrations には手を加えたくないため設定。
 ignore_errors = True
+
+[isort]
+profile=black
+
 
 ```
 
@@ -280,7 +283,7 @@ black では 88 文字をデフォルトの設定としていて、僕は black 
 }
 ```
 
-リンターとはあまり関係がない項目もあるりますが、python 関連では僕はさらに以下のような設定を入れています。
+リンターとはあまり関係がない項目もありますが、python 関連では僕はさらに以下のような設定を入れています。
 
 ```json:settings.json
 {
@@ -325,7 +328,7 @@ repos:
     hooks:
       - id: isort
         name: isort
-        entry: bash -c '.tox/lint/bin/isort --check-only --profile black .'
+        entry: bash -c '.tox/lint/bin/isort --check-only .'
         language: system
         types: [python]
       - id: black
@@ -335,7 +338,7 @@ repos:
         types: [python]
       - id: flake8
         name: flake8
-        entry: bash -c '.tox/lint/bin/flake8 --extend-ignore=F405,W291'
+        entry: bash -c '.tox/lint/bin/flake8 .'
         language: system
         types: [python]
       - id: mypy
@@ -363,12 +366,11 @@ repos:
 
 ```sh:init-pre-commit.sh
 PROJECT_DIR=$(cd $(dirname $0);cd ..; pwd)
-python3 -m venv ${PROJECT_DIR}/.venv_temp_precommit  # tox と pre-commit を使うためだけの一時的な環境を作る
-source ${PROJECT_DIR}/.venv_temp_precommit/bin/activate
+python3 -m venv ${PROJECT_DIR}/.venv_precommit  # tox と pre-commit を使うためだけの一時的な環境を作る
+source ${PROJECT_DIR}/.venv_precommit/bin/activate
 pip install pre-commit tox
 tox -c ${PROJECT_DIR}/tox.ini -e lint
 pre-commit install -c ${PROJECT_DIR}/.pre-commit-config.yaml
-rm -rf ${PROJECT_DIR}/.venv_temp_precommit
 ```
 
 ## リンターを（部分的に）無効化する方法
