@@ -37,11 +37,11 @@ Django では機能の削除が行われる場合には最低で 1 つのフィ�
 
 また、念の為一つのマイナーバージョンごとにアップデートを行い、
 
-```
+```shell
 python -Wa manage.py test
 ```
 
-```
+```shell
 PYTHONWARNINGS=always pytest tests --capture=no
 ```
 

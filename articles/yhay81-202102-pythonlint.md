@@ -1,8 +1,8 @@
 ---
-title: '2021年Python開発リンター導入のベストプラクティス'
-emoji: '🐍'
-type: 'tech' # tech: 技術記事 / idea: アイデア
-topics: ['python', 'black', 'flake8', 'isort', 'mypy']
+title: "2021年Python開発リンター導入のベストプラクティス"
+emoji: "🐍"
+type: "tech" # tech: 技術記事 / idea: アイデア
+topics: ["python", "black", "flake8", "isort", "mypy"]
 published: true
 ---
 
@@ -318,7 +318,7 @@ black では 88 文字をデフォルトの設定としていて、僕は black 
 （ここで紹介するコミット前に実行する方法に関しては OSS でも見かけることが少なく、一般的な方法とは呼べないかもしれません。npm 環境では husky を用いて行う方法が一般に知られていて多くのリポジトリでそれを見ることができるので、commit 前にリントすること自体は普及してもおかしくなさそうなのですが、python 界隈では方法の確立だけでなくそれ自体が行われていることが少ない印象です。）
 
 **git の hook 機能**を用いて commit する度に lint を行わせることができます。
-.git/hooks/pre-commit というファイルに行いたい動作を書けば良いのですが、.git ディレクトリは共有されないので、今回は python 製 の (**pre-commit**)[https://github.com/pre-commit/pre-commit] というツールを利用する方法を紹介します。（git の基本機能の pre-commit と python の pre-commit が同じ名前なのでややこしい。）
+.git/hooks/pre-commit というファイルに行いたい動作を書けば良いのですが、.git ディレクトリは共有されないので、今回は python 製 の [**pre-commit**](https://github.com/pre-commit/pre-commit) というツールを利用する方法を紹介します。（git の基本機能の pre-commit と python の pre-commit が同じ名前なのでややこしい。）
 
 python の pre-commit パッケージでは以下のような設定ファイルを書き、`pre-commit install`というコマンドを打つことで`.git/hooks/pre-commit`のファイルをうまく作成してくれます。
 
