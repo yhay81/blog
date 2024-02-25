@@ -1,23 +1,27 @@
 {
   "name": "blog",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "1.0.1",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepare": "husky",
+    "lint": "markdownlint .",
+    "new:article": "zenn new:article",
+    "new:book": "zenn new:book",
+    "preview": "zenn preview"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/yhay81/blog.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/yhay81/blog/issues"
-  },
-  "homepage": "https://github.com/yhay81/blog#readme",
+  "homepage": "https://zenn.dev/yhay81",
   "dependencies": {
-    "zenn-cli": "^0.1.115"
+    "zenn-cli": "^0.1.153"
+  },
+  "devDependencies": {
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "markdownlint-cli2": "^0.12.1",
+    "prettier": "^3.2.5"
+  },
+  "lint-staged": {
+    "*.md": [
+      "prettier --write",
+      "markdownlint-cli2 --fix"
+    ]
   }
 }
